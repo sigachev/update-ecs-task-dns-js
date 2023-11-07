@@ -1,6 +1,6 @@
+'use strict';
 
-const AWS = require('aws-sdk')
-
+const AWS = require('aws-sdk');
 const _ = require('lodash')
 const ec2 = new AWS.EC2();
 const ecs = new AWS.ECS();
@@ -45,7 +45,7 @@ exports.handler = async (event, context, callback) => {
     const serviceName = task.group.split(":")[1]
     console.log(`task:${serviceName} public-id: ${taskPublicIp}`)
 
-    if (!servicesArray.contains(serviceName)) {
+    if (servicesArray.indexOf(serviceName) > -1) {
         console.log('This service is not in the trigger list.');
         return;
     }
