@@ -32,6 +32,7 @@ In your ECS console, select your cluster and add the tags
 
 * hostedZoneId (the hosted zone id of your public DNS namespace, for example `Z03683693E1POL4P4T9EW`)
 * domain (the domain name of your public DNS namespace, for example `finmates.com`)
+* services (service names separated by "/" DNS entries should be updated for, for example `stocks/notifications`)
 
 ## Demo
 
@@ -51,3 +52,4 @@ To create an event you need to go to EventBridge Console and do it from there.
          }
     }
 
+Lambda handler: src/update-task-dns.handler

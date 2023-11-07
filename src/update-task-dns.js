@@ -1,7 +1,7 @@
-'use strict';
+
+const AWS = require('aws-sdk')
 
 const _ = require('lodash')
-//const AWS = require('aws-sdk');
 const ec2 = new AWS.EC2();
 const ecs = new AWS.ECS();
 const route53 = new AWS.Route53();
@@ -24,7 +24,7 @@ exports.handler = async (event, context, callback) => {
     const tags = await fetchClusterTags(clusterArn)
     const domain = tags['domain']
     const services = tags['services']
-    const servicesArray = services.split(',');
+    const servicesArray = services.split('/');
     const hostedZoneId = tags['hostedZoneId']
 
     console.log(`cluster: ${clusterName}, domain: ${domain}, services: ${services}, hostedZone: ${hostedZoneId}`)
