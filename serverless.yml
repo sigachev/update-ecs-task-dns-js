@@ -1,7 +1,7 @@
 # Welcome to serverless. Read the docs
 # https://serverless.com/framework/docs/
 
-service: update-task-dns
+service: updateDNS
 
 provider:
   name: aws
