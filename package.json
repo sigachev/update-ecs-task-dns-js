@@ -1,0 +1,13 @@
+{
+  "name": "update-task-dns",
+  "version": "0.1.0",
+  "author": "Andreas Pasch",
+  "private": true,
+  "engines": {
+    "node": ">=9.5",
+    "yarn": "^1.3.2"
+  },
+  "dependencies": {
+    "lodash": "^4.17.13"
+  }
+}
