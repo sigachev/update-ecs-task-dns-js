@@ -53,11 +53,11 @@ exports.handler = async (event, context, callback) => {
 };
 
 async function fetchClusterTags(clusterArn) {
-    //console.log(`1`)
+    console.log(`1`)
     const response = await ecs.listTagsForResource({
         resourceArn: clusterArn
     }).promise()
-    //console.log(`2`)
+    console.log(`2`)
     return _.reduce(response.tags, function(hash, tag) {
         let key = tag['key'];
         hash[key] = tag['value'];
