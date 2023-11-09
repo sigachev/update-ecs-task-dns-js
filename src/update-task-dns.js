@@ -18,7 +18,7 @@ exports.handler = async (event, context, callback) => {
 
 
     //const tags = await fetchClusterTags(clusterArn)
-    const tags = await fetchLambdaTags(context.getFunctionName())
+    const tags = await fetchLambdaTags(context.functionName)
     const domain = tags['domain']
     const services = tags['services'].replace(' ','').split(",")
     const hostedZoneId = tags['hostedZoneId']
