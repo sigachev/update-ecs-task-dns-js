@@ -1,0 +1,42 @@
+# Welcome to serverless. Read the docs
+# https://serverless.com/framework/docs/
+
+service: updateDNS
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "ec2:DescribeNetworkInterfaces"
+        - "ecs:DescribeClusters"
+        - "ecs:ListTagsForResource"
+        - "route53:ChangeResourceRecordSets"
+      Resource: "*"  
+
+functions:
+  registerPublicIp:
+    memorySize: 128
+    handler: src/update-task-dns.handler
+    events:
+      - cloudwatchEvent:
+          event:
+            source:
+              - "aws.ecs"
+            detail-type:
+              - "ECS Task State Change"
+            detail:
+              desiredStatus:
+                - "RUNNING"
+              lastStatus:
+                - "RUNNING"
+
+package:
+  exclude:
+    - "**"
+  include:
+    - src/**
+    - node_modules/**
+    - "!node_modules/**/.serverless/**"

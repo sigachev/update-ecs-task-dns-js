@@ -1,0 +1,55 @@
+# Automatic public DNS for Fargate-managed containers in Amazon ECS
+
+Fargate-managed containers in ECS lack build-in support for registering services into public DNS namespaces (12/2018). This is an event-driven approach to automatically register the public IP of a deployed container in a Route 53 hosted zone.
+
+See [this blog post](https://medium.com/@andreas.pasch/automatic-public-dns-for-fargate-managed-containers-in-amazon-ecs-f0ca0a0334b5) for more information.
+
+## How it works
+
+A lambda function subscribes to an "ECS Task State Change" event. 
+It gets called whenever a container has started up. What the function does is :
+
+* fetching the public IP from the container
+* construct a subdomain for the container
+* register the public IP for the subdomain in Route 53
+
+## Installation
+
+First you need to pull NodeJs dependencies using:
+
+`npm install`
+
+You need to have the *Serverless Framework* CLI installed. 
+
+Deploy the function in your active AWS account:
+
+```
+serverless deploy
+```
+
+
+In your ECS console, select your cluster and add the tags
+
+* hostedZoneId (the hosted zone id of your public DNS namespace, for example `Z03683693E1POL4P4T9EW`)
+* domain (the domain name of your public DNS namespace, for example `finmates.com`)
+* services (service names separated by "/" DNS entries should be updated for, for example `stocks/notifications`)
+
+## Demo
+
+Well, just start a Fargate task in your cluster. When the task has started up, the function creates an A-record-set in your hosted zone with the containers' service name as subdomain.
+
+## Notes
+To create an event you need to go to EventBridge Console and do it from there.
+
+### Event pattern:
+
+    {
+      "source": ["aws.ecs"],
+         "detail-type": ["ECS Task State Change"],
+         "detail": {
+            "desiredStatus": ["RUNNING"],
+            "lastStatus": ["RUNNING"]
+         }
+    }
+
+Lambda handler: src/update-task-dns.handler

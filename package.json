@@ -1,6 +1,7 @@
 {
   "name": "updateDNS",
   "version": "0.0.1",
+  "type": "module",
   "author": "Mikhail Sigachev",
   "private": true,
   "engines": {
@@ -11,7 +12,7 @@
     "@aws-sdk/client-ec2": "^3.445.0",
     "@aws-sdk/client-ecs": "^3.445.0",
     "@aws-sdk/client-route-53": "^3.445.0",
-    "aws-sdk": "^2.368.0",
+    "async": "^3.2.5",
     "lodash": "^4.17.13"
   }
 }

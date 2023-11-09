@@ -1,0 +1,13 @@
+Resources:
+  Function:
+    Type: AWS::Serverless::Function
+    Properties:
+      Timeout: 300
+      MemorySize: 128
+      Handler: src/update-task-dns.handler
+      CodeUri: s3://finmates-build-bucket/3310fc4ecb51d2157fd72944935eb13b
+      Runtime: nodejs18.x
+      Architectures:
+      - x86_64
+    Metadata:
+      SamResourceId: Function
