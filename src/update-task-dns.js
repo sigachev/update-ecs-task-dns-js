@@ -6,12 +6,6 @@ const ec2 = new AWS.EC2();
 const ecs = new AWS.ECS();
 const route53 = new AWS.Route53();
 
-
-/**
- * Upsert a public ip DNS record for the incoming task.
- *
- * @param event contains the task in the 'detail' propery
- */
 exports.handler = async (event, context, callback) => {
     console.log('Received event: %j', event);
 
@@ -26,6 +20,7 @@ exports.handler = async (event, context, callback) => {
     const services = tags['services']
     const servicesArray = services.split('/');
     const hostedZoneId = tags['hostedZoneId']
+
 
     console.log(`cluster: ${clusterName}, domain: ${domain}, services: ${services}, hostedZone: ${hostedZoneId}`)
 
@@ -43,9 +38,9 @@ exports.handler = async (event, context, callback) => {
 
     const taskPublicIp = await fetchEniPublicIp(eniId)
     const serviceName = task.group.split(":")[1]
-    console.log(`task:${serviceName} public-id: ${taskPublicIp}`)
+    console.log(`task:${serviceName} public-id:${taskPublicIp}`)
 
-    if (servicesArray.indexOf(serviceName) > -1) {
+    if (!servicesArray.includes(serviceName)) {
         console.log('This service is not in the trigger list.');
         return;
     }
@@ -58,34 +53,36 @@ exports.handler = async (event, context, callback) => {
 };
 
 async function fetchClusterTags(clusterArn) {
+    //console.log(`1`)
     const response = await ecs.listTagsForResource({
         resourceArn: clusterArn
     }).promise()
+    //console.log(`2`)
     return _.reduce(response.tags, function(hash, tag) {
-        var key = tag['key'];
+        let key = tag['key'];
         hash[key] = tag['value'];
         return hash;
-      }, {});
+    }, {});
 }
 
 function getEniId(task) {
     return _.chain(task.attachments)
-    .filter(function(attachment) {
-        return attachment.type === 'eni'
-    })
-    .map(function(eniAttachment) {
-        return _.chain(eniAttachment.details)
-        .filter(function(details) {
-            return details.name === 'networkInterfaceId'
+        .filter(function(attachment) {
+            return attachment.type === 'eni'
         })
-        .map(function(details) {
-            return details.value
+        .map(function(eniAttachment) {
+            return _.chain(eniAttachment.details)
+                .filter(function(details) {
+                    return details.name === 'networkInterfaceId'
+                })
+                .map(function(details) {
+                    return details.value
+                })
+                .head()
+                .value()
         })
         .head()
         .value()
-    })
-    .head()
-    .value()
 }
 
 async function fetchEniPublicIp(eniId) {
